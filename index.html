@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Paddy Field Monitoring & Classification System</title>
+    <meta
+      name="description"
+      content="Satellite-based machine learning decision support prototype for paddy field monitoring in Anuradhapura District, Sri Lanka."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="brand-wrap">
+          <div class="brand-mark" aria-label="Agriculture and satellite monitoring icon">
+            <span class="leaf"></span>
+            <span class="satellite"></span>
+          </div>
+          <div>
+            <h1>Smart Paddy Field Monitoring & Classification System</h1>
+            <p>Satellite-Based Machine Learning Decision Support for Agricultural Officers</p>
+          </div>
+        </div>
+        <nav class="main-nav" aria-label="Main navigation">
+          <a href="#dashboard" class="active">Dashboard</a>
+          <a href="#paddy-mapping">Paddy Mapping</a>
+          <a href="#area-analysis">Area Analysis</a>
+          <a href="#validation">Validation</a>
+          <a href="#about-research">About Research</a>
+        </nav>
+      </header>
+
+      <div class="research-tag">
+        MPhil Research Prototype | Anuradhapura District | Sri Lanka
+      </div>
+
+      <main>
+        <section id="dashboard" class="dashboard-grid">
+          <aside class="side-panel card">
+            <div class="panel-header">
+              <h2>Analysis Selection</h2>
+            </div>
+
+            <div class="field-group">
+              <label for="district">District</label>
+              <select id="district">
+                <option selected>Anuradhapura</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label for="dsDivision">DS Division</label>
+              <select id="dsDivision">
+                <option value="All DS Divisions">All DS Divisions</option>
+                <option value="Padaviya" selected>Padaviya</option>
+                <option value="Kebithigollewa">Kebithigollewa</option>
+                <option value="Mahavilachchiya">Mahavilachchiya</option>
+                <option value="Medawachchiya">Medawachchiya</option>
+                <option value="N.P.C.">N.P.C.</option>
+                <option value="Rambawewa">Rambawewa</option>
+                <option value="Kahatagasdigiliya">Kahatagasdigiliya</option>
+                <option value="Horowpothana">Horowpothana</option>
+                <option value="Galenbidunuwewa">Galenbidunuwewa</option>
+                <option value="Mihintale">Mihintale</option>
+                <option value="N.P.E.">N.P.E.</option>
+                <option value="Nachchaduwa">Nachchaduwa</option>
+                <option value="Nochchiyagama">Nochchiyagama</option>
+                <option value="Rajanganaya">Rajanganaya</option>
+                <option value="Thambuththegama">Thambuththegama</option>
+                <option value="Thalawa">Thalawa</option>
+                <option value="Thirappane">Thirappane</option>
+                <option value="Kekirawa">Kekirawa</option>
+                <option value="Palugaswewa">Palugaswewa</option>
+                <option value="Ipalogama">Ipalogama</option>
+                <option value="Galnewa">Galnewa</option>
+                <option value="Palagala">Palagala</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label for="year">Year</label>
+              <select id="year">
+                <option value="2016" selected>2016</option>
+                <option value="2017">2017</option>
+                <option value="2018">2018</option>
+                <option value="2019">2019</option>
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label for="season">Season</label>
+              <select id="season">
+                <option value="Yala" selected>Yala</option>
+                <option value="Maha">Maha</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label for="gnDivision">GN Division</label>
+              <select id="gnDivision">
+                <option value="All" selected>All</option>
+                <option value="Sample GN 001">Sample GN 001</option>
+                <option value="Sample GN 002">Sample GN 002</option>
+                <option value="Sample GN 003">Sample GN 003</option>
+              </select>
+            </div>
+
+            <button id="runClassification" class="primary-btn">
+              RUN PADDY CLASSIFICATION
+            </button>
+
+            <div class="workflow-mini">
+              <h3>Prototype Workflow</h3>
+              <ul>
+                <li>Reference data + imagery</li>
+                <li>25-band feature stack</li>
+                <li>ML classification</li>
+                <li>GN/DS area estimates</li>
+              </ul>
+            </div>
+          </aside>
+
+          <div class="main-panel">
+            <div class="summary-strip card">
+              <div class="strip-label">Prototype / Demonstration Data</div>
+              <div class="summary-row">
+                <div class="metric-card">
+                  <span class="label">Predicted Paddy Area</span>
+                  <strong id="predictedAreaCard">3,245 ha</strong>
+                  <small>DEMONSTRATION DATA</small>
+                </div>
+                <div class="metric-card">
+                  <span class="label">Reference/Reported Paddy Area</span>
+                  <strong id="referenceAreaCard">3,212 ha</strong>
+                  <small>DEMONSTRATION DATA</small>
+                </div>
+                <div class="metric-card accent">
+                  <span class="label">Difference</span>
+                  <strong id="differenceCard">+33 ha</strong>
+                  <small>DEMONSTRATION DATA</small>
+                </div>
+                <div class="metric-card">
+                  <span class="label">High-Confidence Paddy Area</span>
+                  <strong id="confidenceAreaCard">2,890 ha</strong>
+                  <small>DEMONSTRATION DATA</small>
+                </div>
+              </div>
+            </div>
+
+            <div id="mapSection" class="map-panel card">
+              <div class="section-title-row">
+                <h2>Paddy Field Map</h2>
+                <span class="mini-badge warning">Prototype view</span>
+              </div>
+              <div id="map"></div>
+              <div class="map-legend" aria-label="Map legend">
+                <span><i class="legend-swatch green"></i>Predicted Paddy</span>
+                <span><i class="legend-swatch gray"></i>Non-Paddy</span>
+                <span><i class="legend-swatch gold"></i>High-confidence Paddy</span>
+                <span><i class="legend-swatch orange"></i>Verification Required</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="confidence-section card">
+          <div class="section-title-row">
+            <h2>Prediction Confidence</h2>
+            <span class="mini-badge neutral">Prototype visualization – thresholds to be determined during model validation.</span>
+          </div>
+          <div class="confidence-grid">
+            <div class="confidence-item high">
+              <h3>High Confidence Paddy</h3>
+              <div class="confidence-range">91–100%</div>
+            </div>
+            <div class="confidence-item moderate">
+              <h3>Moderate Confidence</h3>
+              <div class="confidence-range">70–90%</div>
+            </div>
+            <div class="confidence-item review">
+              <h3>Verification Required</h3>
+              <div class="confidence-range">50–70%</div>
+            </div>
+          </div>
+          <p class="muted-note">
+            Areas with lower prediction confidence can be prioritised for field verification.
+          </p>
+        </section>
+
+        <section class="benefits-section">
+          <div class="section-heading">
+            <h2>How This System Supports Agricultural Officers</h2>
+          </div>
+          <div class="benefits-grid">
+            <article class="benefit-card card">
+              <div class="icon-badge">01</div>
+              <h3>Spatial Paddy Identification</h3>
+              <p>
+                Visualise predicted paddy-field locations from satellite observations instead of relying only on tabular agricultural statistics.
+              </p>
+            </article>
+            <article class="benefit-card card">
+              <div class="icon-badge">02</div>
+              <h3>GN/DS-Level Area Estimation</h3>
+              <p>
+                Automatically summarise predicted paddy extent by GN Division and DS Division.
+              </p>
+            </article>
+            <article class="benefit-card card">
+              <div class="icon-badge">03</div>
+              <h3>Field Verification Support</h3>
+              <p>
+                Highlight areas where satellite-based predictions differ from available agricultural records, helping officers identify locations for further verification.
+              </p>
+            </article>
+            <article class="benefit-card card">
+              <div class="icon-badge">04</div>
+              <h3>Seasonal Monitoring</h3>
+              <p>
+                Compare paddy extent across Yala and Maha seasons and across different years when suitable satellite imagery is available.
+              </p>
+            </article>
+            <article class="benefit-card card">
+              <div class="icon-badge">05</div>
+              <h3>Evidence-Based Planning</h3>
+              <p>
+                Provide spatial information that can support agricultural monitoring, planning and resource allocation.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section id="area-analysis" class="comparison-section card">
+          <div class="section-title-row">
+            <h2>Satellite Prediction vs Agricultural Reference</h2>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>GN Division</th>
+                  <th>Reference Area (ha)</th>
+                  <th>Predicted Area (ha)</th>
+                  <th>Difference</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="comparisonTableBody">
+                <tr>
+                  <td>GN 001</td>
+                  <td>185</td>
+                  <td>182</td>
+                  <td class="diff-close">-3</td>
+                  <td><span class="status-badge close">Close Agreement</span></td>
+                </tr>
+                <tr>
+                  <td>GN 002</td>
+                  <td>250</td>
+                  <td>246</td>
+                  <td class="diff-close">-4</td>
+                  <td><span class="status-badge close">Close Agreement</span></td>
+                </tr>
+                <tr>
+                  <td>GN 003</td>
+                  <td>95</td>
+                  <td>118</td>
+                  <td class="diff-review">+23</td>
+                  <td><span class="status-badge review">Review</span></td>
+                </tr>
+                <tr>
+                  <td>GN 004</td>
+                  <td>310</td>
+                  <td>295</td>
+                  <td class="diff-review">-15</td>
+                  <td><span class="status-badge review">Review</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="muted-note">Reference values are demonstration data for the research prototype.</p>
+        </section>
+
+        <section class="ds-summary card">
+          <div class="section-title-row">
+            <h2>DS Division Paddy Area Summary</h2>
+          </div>
+          <div class="summary-layout">
+            <div class="chart-wrap">
+              <canvas id="dsSummaryChart" aria-label="DS division paddy summary chart"></canvas>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>DS Division</th>
+                    <th>Predicted Paddy Area</th>
+                    <th>Reference Area</th>
+                    <th>Difference</th>
+                  </tr>
+                </thead>
+                <tbody id="dsSummaryTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="ml-section card">
+          <div class="section-title-row">
+            <h2>How the Machine Learning Model Works</h2>
+          </div>
+          <details open>
+            <summary>View model workflow</summary>
+            <div class="ml-flow">
+              <div class="flow-step">Satellite imagery is collected for the selected season.</div>
+              <div class="flow-arrow">↓</div>
+              <div class="flow-step">Sentinel-2 provides optical information.</div>
+              <div class="flow-arrow">↓</div>
+              <div class="flow-step">Sentinel-1 provides radar information.</div>
+              <div class="flow-arrow">↓</div>
+              <div class="flow-step">Vegetation, moisture and radar features are derived.</div>
+              <div class="flow-arrow">↓</div>
+              <div class="flow-step">A 25-band temporal feature dataset is created.</div>
+              <div class="flow-arrow">↓</div>
+              <div class="flow-step">Reference paddy and non-paddy areas are used for model training.</div>
+              <div class="flow-arrow">↓</div>
+              <div class="flow-step">A machine-learning classifier learns the relationship between satellite features and paddy/non-paddy classes.</div>
+              <div class="flow-arrow">↓</div>
+              <div class="flow-step">The trained model predicts paddy probability for pixels across the study area.</div>
+              <div class="flow-arrow">↓</div>
+              <div class="flow-step">Predicted pixels are converted into spatial paddy-area estimates.</div>
+            </div>
+          </details>
+        </section>
+
+        <section id="validation" class="xai-section card">
+          <div class="section-title-row">
+            <h2>Explainable AI</h2>
+          </div>
+          <p>
+            The eventual system will use Explainable AI techniques such as SHAP to identify which
+            satellite-derived features contribute most strongly to paddy classification.
+          </p>
+          <div class="shap-demo">
+            <div class="shap-row">
+              <span class="shap-label">NDVI_July</span>
+              <div class="shap-bar"><span style="width: 86%"></span></div>
+              <span class="shap-value">0.86</span>
+            </div>
+            <div class="shap-row">
+              <span class="shap-label">NDWI_June</span>
+              <div class="shap-bar"><span style="width: 74%"></span></div>
+              <span class="shap-value">0.74</span>
+            </div>
+            <div class="shap-row">
+              <span class="shap-label">NDMI_July</span>
+              <div class="shap-bar"><span style="width: 68%"></span></div>
+              <span class="shap-value">0.68</span>
+            </div>
+            <div class="shap-row">
+              <span class="shap-label">VV_August</span>
+              <div class="shap-bar"><span style="width: 62%"></span></div>
+              <span class="shap-value">0.62</span>
+            </div>
+            <div class="shap-row">
+              <span class="shap-label">NDVI_Change_June_July</span>
+              <div class="shap-bar"><span style="width: 58%"></span></div>
+              <span class="shap-value">0.58</span>
+            </div>
+          </div>
+          <p class="muted-note">Illustrative SHAP output – demonstration only.</p>
+        </section>
+
+        <section class="yield-section card">
+          <div class="section-title-row">
+            <h2>Future Extension: Paddy Yield Prediction</h2>
+          </div>
+          <p>
+            The paddy classification component is the first stage. Future stages will integrate climate variables,
+            rainfall, temperature, soil properties, irrigation, fertilization/management, remote sensing features, and
+            agricultural production data to develop a yield prediction model.
+          </p>
+          <div class="yield-flow">
+            <div class="yield-item">Paddy Field Identification</div>
+            <div class="yield-arrow">↓</div>
+            <div class="yield-item">Paddy Area</div>
+            <div class="yield-arrow">↓</div>
+            <div class="yield-item">Yield Prediction</div>
+            <div class="yield-arrow">↓</div>
+            <div class="yield-item">SHAP Explanation</div>
+            <div class="yield-arrow">↓</div>
+            <div class="yield-item">Counterfactual Analysis</div>
+            <div class="yield-arrow">↓</div>
+            <div class="yield-item">Climate-Resilient Decision Support</div>
+          </div>
+        </section>
+
+        <section class="workflow-section card">
+          <div class="section-title-row">
+            <h2>Typical Agricultural Officer Workflow</h2>
+          </div>
+          <div class="workflow-grid">
+            <div class="workflow-step"><span>STEP 1</span><p>Select Year and Season</p></div>
+            <div class="workflow-step"><span>STEP 2</span><p>Select DS/GN Division</p></div>
+            <div class="workflow-step"><span>STEP 3</span><p>Run Paddy Classification</p></div>
+            <div class="workflow-step"><span>STEP 4</span><p>View Predicted Paddy Map</p></div>
+            <div class="workflow-step"><span>STEP 5</span><p>Review Predicted Area</p></div>
+            <div class="workflow-step"><span>STEP 6</span><p>Compare with Agricultural Records</p></div>
+            <div class="workflow-step"><span>STEP 7</span><p>Identify Areas Requiring Field Verification</p></div>
+            <div class="workflow-step"><span>STEP 8</span><p>Use the information for agricultural monitoring and planning</p></div>
+          </div>
+        </section>
+
+        <section class="timeline-section card">
+          <div class="section-title-row">
+            <h2>Multi-Year Monitoring</h2>
+          </div>
+          <p>
+            The proposed framework is designed to support analysis of historical and subsequent seasons when suitable Sentinel-1/Sentinel-2 imagery and reference information are available.
+          </p>
+          <div class="year-timeline">
+            <span>2016</span>
+            <span>→</span>
+            <span>2017</span>
+            <span>→</span>
+            <span>2018</span>
+            <span>→</span>
+            <span>...</span>
+            <span>→</span>
+            <span>2026</span>
+            <span>→</span>
+            <span>2027</span>
+          </div>
+          <p class="muted-note">
+            Model performance for new years should be evaluated and, where necessary, the model should be updated using new validated reference data.
+          </p>
+        </section>
+
+        <section id="about-research" class="about-section card">
+          <div class="section-title-row">
+            <h2>About Research</h2>
+          </div>
+          <div class="about-grid">
+            <div>
+              <p class="research-title">Counterfactual Analysis for Climate-Resilient Paddy Farming using Explainable Artificial Intelligence</p>
+              <ul class="research-meta">
+                <li><strong>Study area:</strong> Anuradhapura District, Sri Lanka</li>
+                <li><strong>Current research stage:</strong> Paddy Area Classification – Prototype</li>
+                <li><strong>Research technologies:</strong> Google Earth Engine, Sentinel-1, Sentinel-2, Machine Learning, Explainable AI, GIS, Python</li>
+              </ul>
+            </div>
+            <div class="research-right">
+              <p>
+                Current prototype uses demonstration data. Final predictions will be generated only after validated reference data and model evaluation are completed.
+              </p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <div class="footer-line"></div>
+        <p>MPhil Research Prototype – For Demonstration and Methodological Development</p>
+      </footer>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite">
+      Demonstration prediction generated using prototype data.
+    </div>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="js/mockData.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
